@@ -14,7 +14,7 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-const webPort = "81"
+const webPort = "80"
 
 var counts int64
 
@@ -44,7 +44,6 @@ func main() {
 	}
 
 	err := srv.ListenAndServe()
-	log.Println(err)
 	if err != nil {
 		log.Panic(err)
 	}

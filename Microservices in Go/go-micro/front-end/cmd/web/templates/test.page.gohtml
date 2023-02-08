@@ -117,10 +117,12 @@
     mailBtn.addEventListener("click", function() {
 
         const payload = {
-            action: "auth",
-            auth: {
-                email: "admin@example.com",
-                password: "verysecret",
+            action: "mail",
+            mail: {
+                from: "me@example.com",
+                to: "you@there.com",
+                subject: "Test email",
+                message: "Hello World!",
             }
         }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -106,6 +107,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	// call the service
 	request, err := http.NewRequest("POST", "http://authentication-service/authenticate", bytes.NewBuffer(jsonData))
 	if err != nil {
+		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
@@ -113,6 +115,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
+		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
@@ -120,9 +123,11 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	// make sure we get back the correct status code
 	if response.StatusCode == http.StatusUnauthorized {
+
 		app.errorJSON(w, errors.New("invalid credentials"))
 		return
 	} else if response.StatusCode != http.StatusAccepted {
+		log.Println(err)
 		app.errorJSON(w, errors.New("error calling auth service"))
 		return
 	}
@@ -133,6 +138,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	// decode the json from the auth service
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
+		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
@@ -154,12 +160,13 @@ func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 	jsonData, _ := json.MarshalIndent(msg, "", "\t")
 
 	//call the mail service
-	mailServiceURL := "http://mail-service/send"
+	mailServiceURL := "http://mailer-service/send"
 
 	//post to mail service
 	request, err := http.NewRequest("POST", mailServiceURL, bytes.NewBuffer(jsonData))
 
 	if err != nil {
+		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
@@ -170,6 +177,7 @@ func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 	response, err := client.Do(request)
 
 	if err != nil {
+		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
@@ -177,6 +185,7 @@ func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 
 	//make sure you get the right status code
 	if response.StatusCode != http.StatusAccepted {
+		log.Println(err)
 		app.errorJSON(w, errors.New("error calling mail service"))
 		return
 

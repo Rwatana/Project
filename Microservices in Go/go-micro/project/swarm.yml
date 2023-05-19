@@ -1,6 +1,25 @@
 version: '3'
 
 services:
+  caddy:
+    image: rwatana/micro-caddy:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+
+  front-end:
+    image: rwatana/front-end:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+
   broker-service:
     image: rwatana/broker-service:1.0.0
     ports:
@@ -75,7 +94,7 @@ services:
       - ./db-data/mongo/:/data/db
 
   mailhog:
-    image: 'mailhog/mailhog:latest'
+    image: 'jcalonso/mailhog:latest'
     ports:
       - "8025:8025"
     deploy:
